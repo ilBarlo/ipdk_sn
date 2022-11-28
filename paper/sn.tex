@@ -1,15 +1,17 @@
 \documentclass{article}
 \usepackage{graphicx}
-\graphicspath{{images/}. {images/p4_programming_language}}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\graphicspath{{images/}. {images/p4_programming_language/}, {images/ipu/}}
 \usepackage{listings}
 \usepackage{blindtext}
 \usepackage{subfiles}
 
-\title{Subfiles package example}
-\author{Overleaf}
-\date{ }
+\title{Software Networking}
 
 \begin{document}
+
+\author{Francesco Barletta, Luca Rocco}
 
 \maketitle
 
@@ -24,5 +26,10 @@
 
 \section{P4 Programming Language}
 \subfile{chapters/p4_programming_language.tex}
+
+\begin{thebibliography}{1}
+    \bibitem{evaleng}
+    Evaluation Engineering, SmartNIC Architectures: A Shift to Accelerators and Why FPGAs are Poised to Dominate, 18 Oct, 2020
+\end{thebibliography}
 
 \end{document}

@@ -2,7 +2,6 @@
 \documentclass[../sn.tex]{subfiles}
 
 \begin{document}
-
 \subsection{What is an IPU?}
 In a typical “server optimized” enterprise data center, systems
 are designed for use by a single party, that is, the enterprise itself.
@@ -25,20 +24,19 @@ infrastructure offload and provides an extra layer of security by
 serving as a control point of the host for running infrastructure
 applications. By using an IPU, the overhead associated with running
 infrastructure tasks can be offloaded from the server (Figure 1).
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/ipu1.png}
-    \caption{IPU ‘disaggregation’ in the CSP data center}
-\end{figure}
-
+\begin{center}
+    \begin{figure}
+        \caption{IPU 'disaggregation' in the CSP data center}
+        \includegraphics[width=\textwidth]{ipu1.png}
+    \end{figure}
+\end{center}
 In other words, the CSP software runs on the IPU itself, while the
-tenant’s applications run on the server CPU. This not only frees
+tenant's applications run on the server CPU. This not only frees
 up resources on the server, whilst optimizing overall
 performance, but provides the CSP with a separate and secure
 control point.
 
-It’s also important to note the difference between an IPU and
+It's also important to note the difference between an IPU and
 a SmartNIC. A SmartNIC is a programmable network adapter
 that can accelerate infrastructure applications, however,
 unlike an IPU it does not provide offload capability to run the
@@ -85,17 +83,12 @@ application or service. For the CSP, this represents an opportunity to accelerat
 cloud while hosting more services (apps/virtual machines) on a
 single machine, leading to improved service delivery and greater
 profit potential per server.
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\textwidth]{images/ipu2.png}
-    \caption{IPU conceptual architecture}
-\end{figure}
-
-
-\begin{thebibliography}{1}
-    \bibitem{evaleng}
-    Evaluation Engineering, SmartNIC Architectures: A Shift to Accelerators and Why FPGAs are Poised to Dominate, 18 Oct, 2020
-\end{thebibliography}
+\begin{center}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{ipu2.png}
+        \caption{IPU conceptual architecture}
+    \end{figure}
+\end{center}
 
 \end{document}
