@@ -24,12 +24,7 @@ infrastructure offload and provides an extra layer of security by
 serving as a control point of the host for running infrastructure
 applications. By using an IPU, the overhead associated with running
 infrastructure tasks can be offloaded from the server (Figure 1).
-\begin{center}
-    \begin{figure}
-        \caption{IPU 'disaggregation' in the CSP data center}
-        \includegraphics[width=\textwidth]{ipu1.png}
-    \end{figure}
-\end{center}
+\centeredimage{ipu1.png}{IPU 'disaggregation' in the CSP data center}
 In other words, the CSP software runs on the IPU itself, while the
 tenant's applications run on the server CPU. This not only frees
 up resources on the server, whilst optimizing overall
@@ -71,23 +66,56 @@ FPGAs, with processor cores. This enables infrastructure processing
 at the speed of hardware to keep up with increasing network speeds
 and the flexibility of software to implement control plane functions.
 With the development of its first IPU, Intel has combined onto a
-single card an Intel Stratix 10 FPGA, through which a highspeed Ethernet controller and programmable data path is
-implemented, along with an Intel Xeon D processor for the
-control plane functions.
+single card an Intel Stratix 10 FPGA, through which a highspeed Ethernet
+controller and programmable data path is implemented, along with an Intel
+Xeon D processor for the control plane functions.
 
 Blending this capability with the ongoing trend in microservices
 development offers a unique opportunity for function-based
 infrastructure—achieved through matching optimal hardware
 components and common software frameworks to each
-application or service. For the CSP, this represents an opportunity to accelerate the
-cloud while hosting more services (apps/virtual machines) on a
-single machine, leading to improved service delivery and greater
+application or service. For the CSP, this represents an opportunity 
+to accelerate the cloud while hosting more services (apps/virtual machines) 
+on a single machine, leading to improved service delivery and greater
 profit potential per server.
-\begin{center}
-    \begin{figure}
-        \includegraphics[width=\textwidth]{ipu2.png}
-        \caption{IPU conceptual architecture}
-    \end{figure}
-\end{center}
+
+Also, An IPU has dedicated functionality to accelerate modern applications 
+that are built using a microservice-based architecture in the data center.
+As a result, a cloud provider can securely manage infrastructure functions 
+while enabling its customer to entirely control the functions of the CPU and system memory. 
+\centeredimage{ipu2.png}{IPU conceptual architecture}
+
+\subsection{What are the main features of an IPU?}
+There are four main features of an IPU (Figure 2): 
+\begin{enumerate}
+    \item Highly intelligent infrastructure acceleration 
+    \item System-level security, control, and isolation
+    \item Common software frameworks 
+    \item Programmable hardware and software, built to the customer's needs
+\end{enumerate} With these features, an IPU has the ability to:
+\begin{enumerate}
+    \item Accelerate infrastructure functions, including storage virtualization, network 
+    virtualization, and security with dedicated protocol accelerators.
+    \item Free up the CPU by shifting storage and network virtualization functions that
+    were previously done in software on the CPU to the IPU. 
+    \item Improve data center utilization by allowing for flexible workload placement.
+    \item Enable cloud service providers to customize infrastructure function deployments 
+    at the speed of software. 
+\end{enumerate} 
+On a larger scale, evolving data centers will require a new intelligence architecture 
+where large-scale distributed compute systems work together seamlessly connected as a single platform (Figure 3).
+This will help resolve today's challenges of stranded resources, congested data flow, and 
+incompatible platform security. Within this new architecture, there will be three categories of compute: 
+the CPU for general purpose computing, the XPU (cross-platform unit) for application-specific or workload-specific 
+acceleration, and the IPU for infrastructure acceleration. All three categories will be connected through 
+programmable networks to efficiently utilize data center resources.
+\centeredimage{ipu3.png}{Evolving data centers connected as a single platform.}
+
+
+
+
+
+
+
 
 \end{document}

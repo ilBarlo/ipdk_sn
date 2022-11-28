@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage[utf8]{inputenc}
-\graphicspath{{images/}. {images/p4_programming_language/}, {images/ipu/}}
+\graphicspath{{images/}. {images/p4_programming_language/}, {images/ipu/}, {images/ovs_p4/}}
 \usepackage{listings}
 \usepackage{blindtext}
 \usepackage{subfiles}
@@ -17,7 +17,10 @@
     \end{center}
 }
 
-\title{Software Networking}
+\title{%
+    Software Networking \\
+    \large The Intel Infrastructure Processing Strategy}
+
 
 \begin{document}
 
@@ -31,7 +34,7 @@
 \section{IPDK}
 \subfile{chapters/ipdk.tex}
 
-\section{P4-OVS}
+\section{P4-Open vSwitch}
 \subfile{chapters/p4_ovs.tex}
 
 \section{P4 Programming Language}
@@ -40,6 +43,8 @@
 \begin{thebibliography}{1}
     \bibitem{evaleng}
     Evaluation Engineering, SmartNIC Architectures: A Shift to Accelerators and Why FPGAs are Poised to Dominate, 18 Oct, 2020
+    \bibitem{ovs}
+    P4 Open vSwitch, https://ipdk.io/documentation/
 \end{thebibliography}
 
 \end{document}
