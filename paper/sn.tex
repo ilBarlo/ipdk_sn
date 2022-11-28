@@ -7,6 +7,16 @@
 \usepackage{blindtext}
 \usepackage{subfiles}
 
+\newcommand{\bold}[1]{\textbf{#1}}
+\newcommand{\centeredimage}[2]{
+    \begin{center}
+        \begin{figure}[H]
+            \includegraphics[width=\textwidth]{#1}
+            \caption{#2}
+        \end{figure}
+    \end{center}
+}
+
 \title{Software Networking}
 
 \begin{document}

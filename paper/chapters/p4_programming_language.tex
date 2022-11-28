@@ -12,9 +12,9 @@ P4 programs and compilers are target-specific (FPGA, Programmable ASICs or softw
 A P4 program classifies packets by header according to the definition provided by the programmer in the program.
 As said before P4 is protocol-agnostic so you must declare every header you want to use because even the most common headers are not provided by the standard library.
 The image below represents the working flow of a P4 program:
-\begin{center}
-    \includegraphics[scale=0.3]{p4_workflow.png}
-\end{center}
+
+\centeredimage{p4_workflow.png}{P4 Workflow}
+
 The compiler produces an executable file for the given data plane target and a config file which allows the control and dataplane to communicate using P4Runtime.
 
 P4 provides a single primitive type which is \emph{bit} and it is used to define headers like the following one:
