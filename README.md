@@ -16,9 +16,11 @@
 - [YouTUbe](https://www.youtube.com/@ipdk9195)
 
 ## P4 Programming Language
+
 - [Documentation](https://p4.org/)
 - [Data Plane Programming](https://opennetworking.org/wp-content/uploads/2020/12/P4_D2_East_2018_01_basics.pdf)
 - [IEEE Paper](./documents/IEEE_P4.pdf)
+- [P4 Guide](https://opennetworking.org/wp-content/uploads/2020/12/P4_D2_East_2018_01_basics.pdf)
 
 ## P4-OVS
 
