@@ -1,6 +1,7 @@
-sn.aux
-sn.fdb_latexmk
-sn.fls
-sn.log
-sn.synctex.gz
-sn.pdf
+.vscode
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.pdf

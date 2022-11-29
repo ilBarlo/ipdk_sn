@@ -5,20 +5,15 @@
 \begin{document}
 
 \subsection{What is Open vSwitch?}
-Open vSwitch is a multilayer software switch licensed under the open source 
-Apache 2 license. The goal is to implement a production quality switch platform 
-that supports standard management interfaces and opens the forwarding functions 
-to programmatic extension and control (Figure 4).
+Open vSwitch is a multilayer software switch licensed under the open source Apache 2 license. 
+The goal is to implement a production quality switch platform that supports standard management interfaces and opens the forwarding functions to programmatic extension and control (Figure 4).
 \centeredimage{ovs_p4_1.png}{Overview of OvS}
 
 Open vSwitch is well suited to function as a virtual switch in VM environments. 
-In addition to exposing standard control and visibility interfaces to the virtual 
-networking layer, it was designed to support distribution across multiple physical 
-servers. Open vSwitch supports multiple Linux-based virtualization technologies 
-including KVM, and VirtualBox \cite{ovs}.
+In addition to exposing standard control and visibility interfaces to the virtual networking layer, it was designed to support distribution across multiple physical servers. 
+Open vSwitch supports multiple Linux-based virtualization technologies including KVM, and VirtualBox \cite{ovs}.
 
-The bulk of the code is written in platform-independent C and is easily ported to 
-other environments. The current release of Open vSwitch supports the following features:
+The bulk of the code is written in platform-independent C and is easily ported to other environments. The current release of Open vSwitch supports the following features:
 \begin{itemize}
     \item Standard 802.1Q VLAN model with trunk and access ports
     \item NIC bonding with or without LACP on upstream switch
@@ -30,112 +25,84 @@ other environments. The current release of Open vSwitch supports the following f
     \item Transactional configuration database with C and Python bindings
     \item High-performance forwarding using a Linux kernel module
 \end{itemize} The included Linux kernel module supports Linux 3.10 and up.
-Open vSwitch can also operate entirely in userspace without assistance from a kernel
-module. This userspace implementation should be easier to port than the kernel-based 
-switch. OVS in userspace can access Linux or DPDK devices. Note Open vSwitch with 
-userspace datapath and non DPDK devices is considered experimental and comes with a 
-cost in performance.
+Open vSwitch can also operate entirely in userspace without assistance from a kernel module. 
+This userspace implementation should be easier to port than the kernel-based switch.
+OVS in userspace can access Linux or DPDK devices. Note Open vSwitch with userspace datapath and non DPDK devices is considered experimental and comes with a cost in performance.
 
 \subsection{What's inside?}
 The main components of this distribution are:
 
 \begin{itemize}
-    \item ovs-vswitchd, a daemon that implements the switch, along with a companion 
-    Linux kernel module for flow-based switching.
-    \item ovsdb-server, a lightweight database server that ovs-vswitchd queries to 
-    obtain its configuration.
+    \item ovs-vswitchd, a daemon that implements the switch, along with a companion Linux kernel module for flow-based switching.
+    \item ovsdb-server, a lightweight database server that ovs-vswitchd queries to obtain its configuration.
     \item ovs-dpctl, a tool for configuring the switch kernel module.
-    \item Scripts and specs for building RPMs for Red Hat Enterprise Linux and deb 
-    packages for Ubuntu/Debian.
+    \item Scripts and specs for building RPMs for Red Hat Enterprise Linux and deb packages for Ubuntu/Debian.
     \item ovs-vsctl, a utility for querying and updating the configuration of ovs-vswitchd.
     \item ovs-appctl, a utility that sends commands to running Open vSwitch daemons.
 \end{itemize}Open vSwitch also provides some tools:
 \begin{itemize}
     \item ovs-ofctl, a utility for querying and controlling OpenFlow switches and controllers.
-    \item ovs-pki, a utility for creating and managing the public-key infrastructure for 
-    OpenFlow switches.
-    \item ovs-testcontroller, a simple OpenFlow controller that may be useful for 
-    testing (though not for production).
+    \item ovs-pki, a utility for creating and managing the public-key infrastructure for OpenFlow switches.
+    \item ovs-testcontroller, a simple OpenFlow controller that may be useful for testing (though not for production).
     \item A patch to tcpdump that enables it to parse OpenFlow messages.
 \end{itemize}
 
 \subsection{Why Open vSwitch?}
-Hypervisors need the ability to bridge traffic between VMs and with the outside world. On 
-Linux-based hypervisors, this used to mean using the built-in L2 switch (the Linux bridge), 
-which is fast and reliable. So, it is reasonable to ask why Open vSwitch is used.
+Hypervisors need the ability to bridge traffic between VMs and with the outside world. 
+On Linux-based hypervisors, this used to mean using the built-in L2 switch (the Linux bridge), which is fast and reliable.
+So, it is reasonable to ask why Open vSwitch is used.
 
-The answer is that Open vSwitch is targeted at multi-server virtualization deployments, a 
-landscape for which the previous stack is not well suited. These environments are often 
-characterized by highly dynamic end-points, the maintenance of logical abstractions, and 
-(sometimes) integration with or offloading to special purpose switching hardware.
-
-The following characteristics and design considerations help Open vSwitch cope with the 
-above requirements.
+The answer is that Open vSwitch is targeted at multi-server virtualization deployments, a landscape for which the previous stack is not well suited.
+These environments are often characterized by highly dynamic end-points, the maintenance of logical abstractions, and (sometimes) integration with or offloading to special purpose switching hardware.
+The following characteristics and design considerations help Open vSwitch cope with the above requirements.
 
 \subsubsection{Mobility of state}
-All network state associated with a network entity (say a virtual machine) should be easily 
-identifiable and migratable between different hosts. This may include traditional “soft state” 
-(such as an entry in an L2 learning table), L3 forwarding state, policy routing state, ACLs, 
-QoS policy, monitoring configuration (e.g. NetFlow, IPFIX, sFlow), etc.
+All network state associated with a network entity (say a virtual machine) should be easily identifiable and migratable between different hosts.
+This may include traditional “soft state” (such as an entry in an L2 learning table), L3 forwarding state, policy routing state, ACLs, QoS policy, monitoring configuration (e.g. NetFlow, IPFIX, sFlow), etc.
 
-Open vSwitch has support for both configuring and migrating both slow (configuration) and fast 
-network state between instances. For example, if a VM migrates between end-hosts, it is possible 
-to not only migrate associated configuration (SPAN rules, ACLs, QoS) but any live network state 
-(including, for example, existing state which may be difficult to reconstruct). Further, Open 
-vSwitch state is typed and backed by a real data-model allowing for the development of structured 
-automation systems.
+Open vSwitch has support for both configuring and migrating both slow (configuration) and fast network state between instances.
+For example, if a VM migrates between end-hosts, it is possible to not only migrate associated configuration (SPAN rules, ACLs, QoS) but any live network state (including, for example, existing state which may be difficult to reconstruct).
+Further, Open vSwitch state is typed and backed by a real data-model allowing for the development of structured automation systems.
 
 \subsubsection{Responding to network dynamics}
-Virtual environments are often characterized by high-rates of change. VMs coming and going, VMs 
-moving backwards and forwards in time, changes to the logical network environments, and so forth.
+Virtual environments are often characterized by high-rates of change.
+VMs coming and going, VMs moving backwards and forwards in time, changes to the logical network environments, and so forth.
 
-Open vSwitch supports a number of features that allow a network control system to respond and adapt 
-as the environment changes. This includes simple accounting and visibility support such as NetFlow, 
-IPFIX, and sFlow. But perhaps more useful, Open vSwitch supports a network state database (OVSDB) 
-that supports remote triggers. Therefore, a piece of orchestration software can “watch” various aspects 
-of the network and respond if/when they change. This is used heavily today, for example, to respond to 
-and track VM migrations.
+Open vSwitch supports a number of features that allow a network control system to respond and adapt as the environment changes.
+This includes simple accounting and visibility support such as NetFlow, IPFIX, and sFlow.
+But perhaps more useful, Open vSwitch supports a network state database (OVSDB) that supports remote triggers.
+Therefore, a piece of orchestration software can “watch” various aspects of the network and respond if/when they change.
+This is used heavily today, for example, to respond to and track VM migrations.
 
-Open vSwitch also supports OpenFlow as a method of exporting remote access to control traffic. There are 
-a number of uses for this including global network discovery through inspection of discovery or link-state 
-traffic (e.g. LLDP, CDP, OSPF, etc.).
+Open vSwitch also supports OpenFlow as a method of exporting remote access to control traffic.
+There are a number of uses for this including global network discovery through inspection of discovery or link-state traffic (e.g. LLDP, CDP, OSPF, etc.).
 
 \subsubsection{Maintenance of logical tags}
-Distributed virtual switches (such as VMware vDS and Cisco’s Nexus 1000V) often maintain logical context 
-within the network through appending or manipulating tags in network packets. This can be used to uniquely 
-identify a VM (in a manner resistant to hardware spoofing), or to hold some other context that is only 
-relevant in the logical domain. Much of the problem of building a distributed virtual switch is to 
-efficiently and correctly manage these tags.
+Distributed virtual switches (such as VMware vDS and Cisco's Nexus 1000V) often maintain logical context within the network through appending or manipulating tags in network packets.
+This can be used to uniquely identify a VM (in a manner resistant to hardware spoofing), or to hold some other context that is only relevant in the logical domain.
+Much of the problem of building a distributed virtual switch is to efficiently and correctly manage these tags.
 
-Open vSwitch includes multiple methods for specifying and maintaining tagging rules, all of which are 
-accessible to a remote process for orchestration. Further, in many cases these tagging rules are stored in an 
-optimized form so they don’t have to be coupled with a heavyweight network device. This allows, for example, 
-thousands of tagging or address remapping rules to be configured, changed, and migrated.
+Open vSwitch includes multiple methods for specifying and maintaining tagging rules, all of which are accessible to a remote process for orchestration.
+Further, in many cases these tagging rules are stored in an optimized form so they don't have to be coupled with a heavyweight network device.
+This allows, for example, thousands of tagging or address remapping rules to be configured, changed, and migrated.
 
-In a similar vein, Open vSwitch supports a GRE implementation that can handle thousands of simultaneous 
-GRE tunnels and supports remote configuration for tunnel creation, configuration, and tear-down. This, for example, 
-can be used to connect private VM networks in different data centers.
+In a similar vein, Open vSwitch supports a GRE implementation that can handle thousands of simultaneous GRE tunnels and supports remote configuration for tunnel creation, configuration, and tear-down.
+This, for example, can be used to connect private VM networks in different data centers.
 
 \subsubsection{Hardware Integration}
-Open vSwitch’s forwarding path (the in-kernel datapath) is designed to be amenable to “offloading” packet processing 
-to hardware chipsets, whether housed in a classic hardware switch chassis or in an end-host NIC. This allows for the 
-Open vSwitch control path to be able to both control a pure software implementation or a hardware switch.
+Open vSwitch's forwarding path (the in-kernel datapath) is designed to be amenable to "offloading" packet processing to hardware chipsets, whether housed in a classic hardware switch chassis or in an end-host NIC.
+This allows for the Open vSwitch control path to be able to both control a pure software implementation or a hardware switch.
 
-There are many ongoing efforts to port Open vSwitch to hardware chipsets. These include multiple merchant silicon 
-chipsets (Broadcom and Marvell), as well as a number of vendor-specific platforms. The “Porting” section in the 
-documentation discusses how one would go about making such a port.
+There are many ongoing efforts to port Open vSwitch to hardware chipsets.
+These include multiple merchant silicon chipsets (Broadcom and Marvell), as well as a number of vendor-specific platforms.
+The “Porting” section in the documentation discusses how one would go about making such a port.
 
-The advantage of hardware integration is not only performance within virtualized environments. If physical switches 
-also expose the Open vSwitch control abstractions, both bare-metal and virtualized hosting environments can be managed 
-using the same mechanism for automated network control.
+The advantage of hardware integration is not only performance within virtualized environments.
+If physical switches also expose the Open vSwitch control abstractions, both bare-metal and virtualized hosting environments can be managed using the same mechanism for automated network control.
 
 \subsection{Summary}
-In many ways, Open vSwitch targets a different point in the design space than previous hypervisor networking stacks, 
-focusing on the need for automated and dynamic network control in large-scale Linux-based virtualization environments.
+In many ways, Open vSwitch targets a different point in the design space than previous hypervisor networking stacks, focusing on the need for automated and dynamic network control in large-scale Linux-based virtualization environments.
 
-The goal with Open vSwitch is to keep the in-kernel code as small as possible (as is necessary for performance) and to 
-re-use existing subsystems when applicable (for example Open vSwitch uses the existing QoS stack). As of Linux 3.3, Open 
-vSwitch is included as a part of the kernel and packaging for the userspace utilities are available on most popular 
-distributions.
-
+The goal with Open vSwitch is to keep the in-kernel code as small as possible (as is necessary for performance) and to re-use existing subsystems when applicable (for example Open vSwitch uses the existing QoS stack).
+As of Linux 3.3, Open vSwitch is included as a part of the kernel and packaging for the userspace utilities are available on most popular distributions.
 \end{document}

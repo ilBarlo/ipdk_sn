@@ -3,86 +3,39 @@
 
 \begin{document}
 \subsection{What is an IPU?}
-In a typical “server optimized” enterprise data center, systems
-are designed for use by a single party, that is, the enterprise itself.
-However, in a CSP (\textit{Communications Service Providers}) cloud data center, the workload is owned by
-the tenant, while the systems themselves are owned by the
-Service Provider.
+In a typical “server optimized” enterprise data center, systems are designed for use by a single party, that is, the enterprise itself.
+However, in a CSP (\textit{Communications Service Providers}) cloud data center, the workload is owned by the tenant, while the systems themselves are owned by the Service Provider.
 
-Further, in highly virtualized environments, significant amounts
-of server resource are expended processing tasks beyond user
-applications, such as hypervisors, container engines, network
-and storage functions, security, and vast amounts of network
-traffic.
+Further, in highly virtualized environments, significant amounts of server resource are expended processing tasks beyond user applications, such as hypervisors, container engines, network and storage functions, security, and vast amounts of network traffic.
 
-To address this challenge Intel has introduced a new class of
-product called the IPU. An IPU is an advanced networking device
-with hardened accelerators and Ethernet connectivity that
-accelerates and manages infrastructure functions using tightly
-coupled, dedicated, programmable cores. An IPU offers full
-infrastructure offload and provides an extra layer of security by
-serving as a control point of the host for running infrastructure
-applications. By using an IPU, the overhead associated with running
-infrastructure tasks can be offloaded from the server (Figure 1).
+To address this challenge Intel has introduced a new class of product called the IPU.
+An IPU is an advanced networking device with hardened accelerators and Ethernet connectivity that accelerates and manages infrastructure functions using tightly coupled, dedicated, programmable cores.
+An IPU offers full infrastructure offload and provides an extra layer of security by serving as a control point of the host for running infrastructure applications.
+By using an IPU, the overhead associated with running infrastructure tasks can be offloaded from the server (Figure 1).
 \centeredimage{ipu1.png}{IPU 'disaggregation' in the CSP data center}
-In other words, the CSP software runs on the IPU itself, while the
-tenant's applications run on the server CPU. This not only frees
-up resources on the server, whilst optimizing overall
-performance, but provides the CSP with a separate and secure
-control point.
+In other words, the CSP software runs on the IPU itself, while the tenant's applications run on the server CPU. 
+This not only frees up resources on the server, whilst optimizing overall performance, but provides the CSP with a separate and secure control point.
 
-It's also important to note the difference between an IPU and
-a SmartNIC. A SmartNIC is a programmable network adapter
-that can accelerate infrastructure applications, however,
-unlike an IPU it does not provide offload capability to run the
-entire infrastructure stack and therefore does not give the
-service provider an extra layer of security and control,
-enforced in hardware.
+It's also important to note the difference between an IPU and a SmartNIC.
+A SmartNIC is a programmable network adapter that can accelerate infrastructure applications, however, unlike an IPU it does not provide offload capability to run the entire infrastructure stack and therefore does not give the service provider an extra layer of security and control, enforced in hardware.
 
 \subsection{How does an IPU work?}
-As data center networking marches forward from 25 GbE, to 50
-GbE and into the realm of Terabit Ethernet (100+ GbE), it creates
-unprecedented volumes of network traffic. The net result is an
-exponential increase in the number of packets transferred per
-second putting incremental strain on the capabilities of a traditional
-Network Interface Card (NIC).
+As data center networking marches forward from 25 GbE, to 50 GbE and into the realm of Terabit Ethernet (100+ GbE), it creates unprecedented volumes of network traffic.
+The net result is an exponential increase in the number of packets transferred per second putting incremental strain on the capabilities of a traditional Network Interface Card (NIC).
 
-Additionally, the advent of software-defined networking (SDN)
-puts more load onto servers as CPU cores are swallowed up with
-virtual switches, load balancing, encryption, deep packet
-inspection, and other I/O intensive tasks.
-Add into the mix the increasing sophistication of management
-software running on servers, and it becomes evident that there
-is a genuine need to manage the explosive growth in network
-traffic while also offloading “infrastructure” workloads from
-server CPUs to enable more resources to be dedicated to
-mission-critical application processing.
-To put this into context, studies have shown that networking in
-highly virtualized environments can consume upwards of 30
-percent of the host's CPU cycles \cite{evaleng}.
+Additionally, the advent of software-defined networking (SDN) puts more load onto servers as CPU cores are swallowed up with virtual switches, load balancing, encryption, deep packet inspection, and other I/O intensive tasks.
+Add into the mix the increasing sophistication of management software running on servers, and it becomes evident that there is a genuine need to manage the explosive growth in network traffic while also offloading "infrastructure" workloads from server CPUs to enable more resources to be dedicated to mission-critical application processing.
+To put this into context, studies have shown that networking in highly virtualized environments can consume upwards of 30 percent of the host's CPU cycles \cite{evaleng}.
 
-IPUs combine hardware-based data paths, which can include
-FPGAs, with processor cores. This enables infrastructure processing
-at the speed of hardware to keep up with increasing network speeds
-and the flexibility of software to implement control plane functions.
-With the development of its first IPU, Intel has combined onto a
-single card an Intel Stratix 10 FPGA, through which a highspeed Ethernet
-controller and programmable data path is implemented, along with an Intel
-Xeon D processor for the control plane functions.
+IPUs combine hardware-based data paths, which can include FPGAs, with processor cores.
+This enables infrastructure processing at the speed of hardware to keep up with increasing network speeds and the flexibility of software to implement control plane functions.
+With the development of its first IPU, Intel has combined onto a single card an Intel Stratix 10 FPGA, through which a highspeed Ethernet controller and programmable data path is implemented, along with an Intel Xeon D processor for the control plane functions.
 
-Blending this capability with the ongoing trend in microservices
-development offers a unique opportunity for function-based
-infrastructure—achieved through matching optimal hardware
-components and common software frameworks to each
-application or service. For the CSP, this represents an opportunity 
-to accelerate the cloud while hosting more services (apps/virtual machines) 
-on a single machine, leading to improved service delivery and greater
-profit potential per server.
+Blending this capability with the ongoing trend in microservices development offers a unique opportunity for function-based infrastructure—achieved through matching optimal hardware components and common software frameworks to each application or service.
+For the CSP, this represents an opportunity to accelerate the cloud while hosting more services (apps/virtual machines) on a single machine, leading to improved service delivery and greater profit potential per server.
 
-Also, An IPU has dedicated functionality to accelerate modern applications 
-that are built using a microservice-based architecture in the data center.
-As a result, a cloud provider can securely manage infrastructure functions 
-while enabling its customer to entirely control the functions of the CPU and system memory. 
+Also, An IPU has dedicated functionality to accelerate modern applications that are built using a microservice-based architecture in the data center.
+As a result, a cloud provider can securely manage infrastructure functions while enabling its customer to entirely control the functions of the CPU and system memory. 
 \centeredimage{ipu2.png}{IPU conceptual architecture}
 
 \subsection{What are the main features of an IPU?}
@@ -94,28 +47,19 @@ There are four main features of an IPU (Figure 2):
     \item Programmable hardware and software, built to the customer's needs
 \end{enumerate} With these features, an IPU has the ability to:
 \begin{enumerate}
-    \item Accelerate infrastructure functions, including storage virtualization, network 
-    virtualization, and security with dedicated protocol accelerators.
-    \item Free up the CPU by shifting storage and network virtualization functions that
-    were previously done in software on the CPU to the IPU. 
+    \item Accelerate infrastructure functions, including storage virtualization, network virtualization, and security with dedicated protocol accelerators.
+    \item Free up the CPU by shifting storage and network virtualization functions that were previously done in software on the CPU to the IPU. 
     \item Improve data center utilization by allowing for flexible workload placement.
-    \item Enable cloud service providers to customize infrastructure function deployments 
-    at the speed of software. 
+    \item Enable cloud service providers to customize infrastructure function deployments at the speed of software. 
 \end{enumerate} 
-On a larger scale, evolving data centers will require a new intelligence architecture 
-where large-scale distributed compute systems work together seamlessly connected as a single platform (Figure 3).
-This will help resolve today's challenges of stranded resources, congested data flow, and 
-incompatible platform security. Within this new architecture, there will be three categories of compute: 
-the CPU for general purpose computing, the XPU (cross-platform unit) for application-specific or workload-specific 
-acceleration, and the IPU for infrastructure acceleration. All three categories will be connected through 
-programmable networks to efficiently utilize data center resources.
+On a larger scale, evolving data centers will require a new intelligence architecture where large-scale distributed compute systems work together seamlessly connected as a single platform (Figure 3).
+This will help resolve today's challenges of stranded resources, congested data flow, and incompatible platform security.
+Within this new architecture, there will be three categories of compute:
+\begin{itemize}
+    \item the CPU for general purpose computing
+    \item the XPU (cross-platform unit) for application-specific or workload-specific acceleration
+    \item the IPU for infrastructure acceleration
+\end{itemize}
+All three categories will be connected through programmable networks to efficiently utilize data center resources.
 \centeredimage{ipu3.png}{Evolving data centers connected as a single platform.}
-
-
-
-
-
-
-
-
 \end{document}

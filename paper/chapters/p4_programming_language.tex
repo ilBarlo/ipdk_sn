@@ -4,32 +4,104 @@
 \begin{document}
 
 \subsection{Introduction}
-P4 is domain-specific programming language for network devices, specifying how data plane devices process packets.
+P4 is a domain-specific programming language for network devices, specifying how data plane devices process packets.
 It is vendor-agnostic and protocol-agnostic and it aims at making easier the implementation of software packets processing pipeline instead of waiting years to develop a new chip.
-P4 is a declarative language, each P4 program follow the same workflow.
-P4 programs and compilers are target-specific (FPGA, Programmable ASICs or software x86).
+P4 is a declarative language, each P4 program follows the same workflow.
+P4 programs and compilers are target-specific (FPGA, Programmable ASICs, or software x86).
 
-A P4 program classifies packets by header according to the definition provided by the programmer in the program.
-As said before P4 is protocol-agnostic so you must declare every header you want to use because even the most common headers are not provided by the standard library.
+A P4 program classifies packets by header according to the definition provided by the programmer.
+As said before P4 is protocol-agnostic so you must declare every header you want to use because even the most common headers are not present in the standard libraries.
 The image below represents the working flow of a P4 program:
-
 \centeredimage{p4_workflow.png}{P4 Workflow}
 
-The compiler produces an executable file for the given data plane target and a config file which allows the control and dataplane to communicate using P4Runtime.
-
+\subsection{Motivation}
+The main motivation that is pushing us to program Data Planes instead of creating new chips is the very little time required to create a new program compared to the time needed to create a new chip.
+When you want to change functionality in your network you waste a lot of time developing a new chip and testing it while using a P4 programmable chip just have to change the code and re-compile.
+So what we should achieve is to create a chip to offload network functionalities in it instead of building chips having network functionalities wired in it.
+\subsection{Data Plane Declaration}
 P4 provides a single primitive type which is \emph{bit} and it is used to define headers like the following one:
 \begin{lstlisting}
-    typedef bit<48> macAddr_t;
+  typedef bit<48> macAddr_t;
 
-    header ethernet_t {
-        macAddr_t dstAddr;
-        macAddr_t srcAddr;
-        bit<16>   etherType
-    }
+  header ethernet_t {
+    macAddr_t dstAddr;
+    macAddr_t srcAddr;
+    bit<16>   etherType
+  }
 \end{lstlisting}
-In the source code a classifier is called \emph{Programmable Parser} and it is basically an ordered definition of headers which is used to matches the inbound packets and classifies them
-
+In the source code, a classifier is called \emph{Programmable Parser} and it is an ordered definition of headers that are used to match the inbound packets and classify them. A parser is defined as follows:
 \begin{lstlisting}
+  parser MyParser(packet_in packet, out headers hdr) {
 
+    state start {
+      transition parse_ethernet;
+    }
+
+    state parse_ethernet {
+      packet.extract(hdr.ethernet);
+      transition select(hdr.ethernet.etherType) {
+        TYPE_IPV4: parse_ipv4;
+        default: accept;
+      }
+    }
+
+    state parse_ipv4 {
+      packet.extract(hdr.ipv4);
+      transition accept;
+    }
+  }
 \end{lstlisting}
+A parser is a state machine where each state works on a subset of the packet's fields and can fail or succeed. When a state fails an action must be performed, for example, drop the packet or forward it to another state.
+Once the parsing is done there is a pipeline of \emph{Match-Action} called \emph{Programmable Match-Action Pipeline} and a valid packet must be processed by each step of the pipeline.
+An action of the pipeline is used to change header values, decide the destination, or change addresses. In the following example there is a single step that defines IPv4 forwarding:
+\begin{lstlisting}
+  control MyIngress(inout headers hdr,
+          inout metadata meta,
+          inout standard_metadata_t standard_metadata) {
+
+    action drop() {
+      mark_to_drop(standard_metadata);
+    }
+
+    action ipv4_forward(macAddr_t dstAddr, 
+                        egressSpec_t port) {
+      standard_metadata.egress_spec = port;
+      hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+      hdr.ethernet.dstAddr = dstAddr;
+      hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    }
+
+    table ipv4_lpm {
+      key = {
+        hdr.ipv4.dstAddr: lpm;
+      }
+      actions = {
+        ipv4_forward;
+        drop;
+        NoAction;
+      }
+      size = 1024;
+      default_action = drop();
+    }
+
+    apply {
+      if (hdr.ipv4.isValid()) {
+          ipv4_lpm.apply();
+      }
+    }
+}
+\end{lstlisting}
+\centeredimage{programmable_pipeline.png}{Programmable Pipeline}
+The last piece of the pipeline is the \emph{Programmable Deparser} which decides how the packets will look in the wire.
+It emits headers in the order that they should be transmitted in the wire.
+The syntax used to define a de-parser is the same as shown for the parser.
+\begin{lstlisting}
+  control MyDeparser(packet_out packet, in headers hdr) {
+    apply {
+      packet.emit(hdr.ethernet);
+      packet.emit(hdr.ipv4);
+    }
+  }
+\end{lstlisting}
+In the context of IPDK, P4 is used to define how the integrated OVS (Open vSwitch) should process packets. 
 \end{document}
