@@ -4,4 +4,58 @@
 
 \begin{document}
 
+\subsection{Introduction}
+IPDK is an open-source development framework, community-driven and target-agnostic which runs on CPU, IPU, DPU or switch.
+The main maintainer is Intel but also other companies are implied like Marvell, Ericsson, etc.
+What IPDK does is create an abstraction level between the target and the implementation to offload and manage infrastructures that run on different targets.
+Under the hood, it uses a few well-established linux frameworks like \acrshort{spdk}, \acrshort{dpdk} and \acrshort{p4}.
+
+\acrshort{ipdk} introduces two different standardized interfaces:
+\begin{itemize}
+    \item \bold{Infrastructure Application Interface}: Developed starting from pre-existing networking interfaces. It uses \acrshort{rpc} mechanisms to allow applications to run locally, remotely or a mix of both. This interface uses a couple of tools:
+        \begin{itemize}
+            \item \bold{P4Runtime}: Used for programmable networking data plane
+            \item \bold{OpenConfig}: Used for configuring physical ports, virtual devices, QoS and inline operations such as IPsec
+        \end{itemize}
+    \item \bold{Target Abstraction Interface}: The Target Abstraction Interface (TAI) is an abstraction exposed by an infrastructure device running infrastructure applications that serve connected compute instances (attached hosts and/or VMs, which may or may not be containerized).
+    The infrastructure device may also contain an isolated Infrastructure Manager used to help manage the lifecycle of the device.
+\end{itemize}
+In the image below is it possible to see how the two interfaces work and in which kind of communication they are involved
+\centeredimage{ipdk-layers}{IPDK layers and interfaces interactions}
+Using \acrshort{ipdk} it is possible to handle either Virtual Networking or Virtual Storage environments.
+
+\subsubsection{Virtual Networking}
+When we talk about \acrshort{vn} in the context of \acrshort{ipdk} we are referring to a single virtual device type which is \emph{virtio-net}. Is it possible to create a \acrlong{vn} in a bare metal server that hosts \acrshort{vm}s or in a nested virtualized environment, in both cases the configuration is the same.
+\centeredimage{vn-iaas}{Virtual Networking Example}
+In the image above we can see 4 different steps needed to hotplug a new virtual device, in this case, \acrshort{sw} Target
+\begin{itemize}
+    \item \bold{1.} Over OpenConfig, create a new virtual port (specifying the type, number of queues, etc.).
+    \item \bold{2.} This new virtual port is associated with a netdev in P4 OVS, and a corresponding port device is hotplugged into the host or VM.
+    Any exception traffic from that hotplug'd device will arrive on this netdev.
+    Any traffic P4 OVS wants to direct to this device can be sent over this netdev as well.
+    \item \bold{3.} The tenant instance loads the corresponding driver for that device and can now send/receive traffic.
+    \item \bold{4.} The virtual private cloud data-plane moves traffic to/from the instance, sending exceptions to the infrastructure software when needed.
+\end{itemize}
+
+\subsubsection{Virtual Storage}
+In this case, there are 3 different devices supported by the suite:
+\begin{itemize}
+    \item virtio-blk
+    \item virtio-scsi
+    \item NVMe
+\end{itemize}
+Using the same schema that we've seen in the \acrshort{vn} part we can describe how the \acrlong{vs} management is achieved
+\centeredimage{vs-iaas}{Virtual Storage Example}
+\begin{itemize}
+    \item \bold{1.} Over OpenConfig, create a new virtual storage controller device, specifying the device type, number of queues, etc.
+    \item \bold{2.} The storage controller has one or more attached volumes.
+    The maximum number of volumes is dependent on the device type.
+    Each volume is associated with an SPDK block device (bdev) that implements the actual storage backing the volume.
+    \item \bold{3.} The tenant instance loads the corresponding driver for that device, and can then send storage requests to volumes attached to the storage controller that will be processed by the SPDK storage application.
+    \item \bold{4.} Storage requests (reads, writes, flushes) directed to a volume will arrive at the SPDK target layer and be translated and forwarded to its associated SPDK bdev.
+    SPDK bdevs can be of many different types, depending on the type of backing storage for the volume.
+    Examples include NVMe over TCP, NVMe over RDMA, or Ceph RBD.
+    \item \bold{5.} The SPDK bdev module responsible for a given bdev type forwards the storage request to the bdev's associated remote target. For example, the NVMe/TCP bdev module is responsible for establishing TCP connections to the remote NVMe/TCP target and sending NVMe CONNECT commands to associate those connections with the NVMe subsystem containing the volume associated with the tenant's virtual storage controller. It also constructs NVMe commands for the storage request(s) and sends them (along with any write data) to the remote target over the previously established TCP socket.
+\end{itemize}
+\clearpage
 \end{document}

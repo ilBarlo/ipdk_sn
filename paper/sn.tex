@@ -2,10 +2,12 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage[utf8]{inputenc}
-\graphicspath{{images/}. {images/p4_programming_language/}, {images/ipu/}, {images/ovs_p4/}}
+\graphicspath{{images/}. {images/p4_programming_language/}, {images/ipu/}, {images/ovs_p4/}, {images/ipdk}}
 \usepackage{listings}
 \usepackage{blindtext}
 \usepackage{subfiles}
+\usepackage[acronym]{glossaries}
+\makenoidxglossaries
 
 \newcommand{\bold}[1]{\textbf{#1}}
 \newcommand{\centeredimage}[2]{
@@ -21,12 +23,25 @@
     Software Networking \\
     \large The Intel Infrastructure Processing Strategy}
 
+\newacronym{ipdk}{IPDK}{Infrastructure Programmer Development Kit}
+\newacronym{spdk}{SPDK}{Storage Performance Development Kit}
+\newacronym{dpdk}{DPDK}{Data Plane Development Kit}
+\newacronym{p4}{P4}{P4 Programming Language}
+\newacronym{rpc}{RPC}{Remote Procedure Call}
+\newacronym{vn}{VN}{Virtual Networking}
+\newacronym{vm}{VM}{Virtual Machine}
+\newacronym{sw}{SW}{Software}
+\newacronym{vs}{VS}{Virtual Storage}
 
 \begin{document}
 
 \author{Francesco Barletta, Luca Rocco}
 
 \maketitle
+
+\tableofcontents
+
+\clearpage
 
 \section{Intel\raisebox {1mm}{\textregistered} Infrastructure Processing Unit}
 \subfile{chapters/ipu.tex}
@@ -39,6 +54,13 @@
 
 \section{P4 Programming Language}
 \subfile{chapters/p4_programming_language.tex}
+
+\clearpage
+
+\printnoidxglossary[type=acronym]
+\printacronyms
+
+\clearpage
 
 \begin{thebibliography}{1}
     \bibitem{evaleng}
