@@ -80,24 +80,28 @@ what we can see is that the port is a socket and we can specify the path where t
 The path is important because we must pass it as an argument to our VM in the last step of this demo.
 \subsubsection*{Create two virtual ports}
 \centeredimage{create_ports}{Virtual Ports creation command}
-Now that the Open vSwitch is ready to be used we can compile our program and build the pipeline into OVS.
+Now that the Open vSwitch is ready to be used we can compile our program and build the pipeline defined into the P4 program.
 Assuming that the program folder is located at \emph{/root/examples/simple\_l3} we can run the following commands:
-\centeredimage{build_pipeline}{Compile and pipeline build command}
-
+\centeredimage{build_pipeline}{Compile and build the pipeline command}
 What we've done until now is: 
 \begin{itemize}
     \item Run the Open vSwitch
     \item Create 2 different ports which the Open vSwitch listens on
-    \item Build the P4 program and the pipeline into the Open vSwitch
+    \item Build the P4 program
 \end{itemize}
-The last step is creating two virtual machines and attaching them to the virtual ports.
+\subsubsection*{Create VMs}
+In this step, we will create two virtual machines and attach them to the virtual ports.
 To create the VMs we can use our favorite tool, in this case, we use KVM.
 The command looks as follows:
 \centeredimage{kvm_vm_creation}{KVM VM creation command}
 The command above will create a single VM so we have to run it again referring to the second port's socket and changing some attributes.
+\subsubsection*{Push the pipeline into P4-OVS}
+In the last step, we will push the pipeline into the P4-OVS by using the \emph{ovs-p4ctl}:
+\centeredimage{push_pipeline}{Push pipeline into P4-OVS command}
+This last step makes run the pipeline inside the Open vSwitch so the switch will use our P4 program to take decisions about packet forwarding.
 
 In the demonstration, we avoided the VMs' configuration files to keep it lean but of course, the VMs must have 2 static routes to forward traffic to the right destination
 \centeredimage{routes}{Routes in VM}
-Note that we must add also an entry to the neighbor table since we haven't configured the ARP protocol in Open vSwitch
+Note that we must add also an entry to the neighbor table since we haven't coded the ARP protocol in out P4 program so the switch doesn't know how to handle it.
 \clearpage
 \end{document}
