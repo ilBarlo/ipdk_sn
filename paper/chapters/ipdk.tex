@@ -3,7 +3,6 @@
 \graphicspath{{\subfix{../images/}}}
 
 \begin{document}
-
 \subsection{Introduction}
 IPDK is an open-source development framework, community-driven and target-agnostic which runs on CPU, IPU, DPU or switch.
 The main maintainer is Intel but also other companies are implied like Marvell, Ericsson, etc.
@@ -12,7 +11,9 @@ Under the hood, it uses a few well-established linux frameworks like \acrshort{s
 
 \acrshort{ipdk} introduces two different standardized interfaces:
 \begin{itemize}
-    \item \bold{Infrastructure Application Interface}: Developed starting from pre-existing networking interfaces. It uses \acrshort{rpc} mechanisms to allow applications to run locally, remotely or a mix of both. This interface uses a couple of tools:
+    \item \bold{Infrastructure Application Interface}: Developed starting from pre-existing networking interfaces.
+    It uses \acrshort{rpc} mechanisms to allow applications to run locally, remotely or a mix of both.
+    This interface uses a couple of tools:
         \begin{itemize}
             \item \bold{P4Runtime}: Used for programmable networking data plane
             \item \bold{OpenConfig}: Used for configuring physical ports, virtual devices, QoS and inline operations such as IPsec
@@ -20,12 +21,13 @@ Under the hood, it uses a few well-established linux frameworks like \acrshort{s
     \item \bold{Target Abstraction Interface}: The Target Abstraction Interface (TAI) is an abstraction exposed by an infrastructure device running infrastructure applications that serve connected compute instances (attached hosts and/or VMs, which may or may not be containerized).
     The infrastructure device may also contain an isolated Infrastructure Manager used to help manage the lifecycle of the device.
 \end{itemize}
-In the image below is it possible to see how the two interfaces work and in which kind of communication they are involved
+In the image below it's possible to see how the two interfaces work and in which kind of communication they are involved.
 \centeredimage{ipdk-layers}{IPDK layers and interfaces interactions}
-Using \acrshort{ipdk} it is possible to handle either Virtual Networking or Virtual Storage environments.
+Using \acrshort{ipdk} it is possible to build either Virtual Networking or Virtual Storage environments.
 
 \subsubsection{Virtual Networking}
-When we talk about \acrshort{vn} in the context of \acrshort{ipdk} we are referring to a single virtual device type which is \emph{virtio-net}. Is it possible to create a \acrlong{vn} in a bare metal server that hosts \acrshort{vm}s or in a nested virtualized environment, in both cases the configuration is the same.
+When we talk about \acrshort{vn} in the context of \acrshort{ipdk} we are referring to a single virtual device type which is \emph{virtio-net}.
+Is it possible to create a \acrlong{vn} in a bare metal server that hosts \acrshort{vm}s or in a nested virtualized environment, in both cases the configuration is the same.
 \centeredimage{vn-iaas}{Virtual Networking Example}
 In the image above we can see 4 different steps needed to hotplug a new virtual device, in this case, \acrshort{sw} Target
 \begin{itemize}
@@ -55,7 +57,47 @@ Using the same schema that we've seen in the \acrshort{vn} part we can describe 
     \item \bold{4.} Storage requests (reads, writes, flushes) directed to a volume will arrive at the SPDK target layer and be translated and forwarded to its associated SPDK bdev.
     SPDK bdevs can be of many different types, depending on the type of backing storage for the volume.
     Examples include NVMe over TCP, NVMe over RDMA, or Ceph RBD.
-    \item \bold{5.} The SPDK bdev module responsible for a given bdev type forwards the storage request to the bdev's associated remote target. For example, the NVMe/TCP bdev module is responsible for establishing TCP connections to the remote NVMe/TCP target and sending NVMe CONNECT commands to associate those connections with the NVMe subsystem containing the volume associated with the tenant's virtual storage controller. It also constructs NVMe commands for the storage request(s) and sends them (along with any write data) to the remote target over the previously established TCP socket.
+    \item \bold{5.} The SPDK bdev module responsible for a given bdev type forwards the storage request to the bdev's associated remote target.
+    For example, the NVMe/TCP bdev module is responsible for establishing TCP connections to the remote NVMe/TCP target and sending NVMe CONNECT commands to associate those connections with the NVMe subsystem containing the volume associated with the tenant's virtual storage controller.
+    It also constructs NVMe commands for the storage request(s) and sends them (along with any write data) to the remote target over the previously established TCP socket.
 \end{itemize}
+\acrshort{ipdk} provides a good number of recipes where to start to develop a custom solution.
+Almost all the solutions are based on P4-OVS and a P4 program.
+The most representative example is IPv4 forwarding which uses the same program we've seen in the section about \acrlong{vn}.
+
+\subsection{IPDK L3 forwarding example}
+First of all, it is very convenient to clone the \acrshort{ipdk} repository and start from the example structure since a bunch of scripts are provided to make the configuration process easier and faster.
+
+The very nice thing to use \acrshort{ipdk} is that we don't need to install anything on our machine since the scripts included in \acrshort{ipdk} take care of the installation of every single required component.
+
+Assuming we are in a bare metal environment and we have a machine running Ubuntu 20.04 we can install dependencies on our machine by running a script:
+\centeredimage{host_install}{Dependencies installation command}
+After the command above everything is ready to be configured.
+We need to run a few commands to run P4-OVS and create 2 virtual ports, later in the demo we will use those ports to connect 2 VMs having different networks.
+\subsubsection*{Start P4-OVS}
+\centeredimage{run_p4_ovs}{P4-OVS start command}
+what we can see is that the port is a socket and we can specify the path where to store this socket.
+The path is important because we must pass it as an argument to our VM in the last step of this demo.
+\subsubsection*{Create two virtual ports}
+\centeredimage{create_ports}{Virtual Ports creation command}
+Now that the Open vSwitch is ready to be used we can compile our program and build the pipeline into OVS.
+Assuming that the program folder is located at \emph{/root/examples/simple\_l3} we can run the following commands:
+\centeredimage{build_pipeline}{Compile and pipeline build command}
+
+What we've done until now is: 
+\begin{itemize}
+    \item Run the Open vSwitch
+    \item Create 2 different ports which the Open vSwitch listens on
+    \item Build the P4 program and the pipeline into the Open vSwitch
+\end{itemize}
+The last step is creating two virtual machines and attaching them to the virtual ports.
+To create the VMs we can use our favorite tool, in this case, we use KVM.
+The command looks as follows:
+\centeredimage{kvm_vm_creation}{KVM VM creation command}
+The command above will create a single VM so we have to run it again referring to the second port's socket and changing some attributes.
+
+In the demonstration, we avoided the VMs' configuration files to keep it lean but of course, the VMs must have 2 static routes to forward traffic to the right destination
+\centeredimage{routes}{Routes in VM}
+Note that we must add also an entry to the neighbor table since we haven't configured the ARP protocol in Open vSwitch
 \clearpage
 \end{document}

@@ -20,77 +20,13 @@ When you want to change functionality in your network you waste a lot of time de
 So what we should achieve is to create a chip to offload network functionalities in it instead of building chips having network functionalities wired in it.
 \subsection{Data Plane Declaration}
 P4 provides a single primitive type which is \emph{bit} and it is used to define headers like the following one:
-\begin{lstlisting}
-  typedef bit<48> macAddr_t;
-
-  header ethernet_t {
-    macAddr_t dstAddr;
-    macAddr_t srcAddr;
-    bit<16>   etherType
-  }
-\end{lstlisting}
+\centeredimage{ethernet_header}{Ethernet header defined in P4}
 In the source code, a classifier is called \emph{Programmable Parser} and it is an ordered definition of headers that are used to match the inbound packets and classify them. A parser is defined as follows:
-\begin{lstlisting}
-  parser MyParser(packet_in packet, out headers hdr) {
-
-    state start {
-      transition parse_ethernet;
-    }
-
-    state parse_ethernet {
-      packet.extract(hdr.ethernet);
-      transition select(hdr.ethernet.etherType) {
-        TYPE_IPV4: parse_ipv4;
-        default: accept;
-      }
-    }
-
-    state parse_ipv4 {
-      packet.extract(hdr.ipv4);
-      transition accept;
-    }
-  }
-\end{lstlisting}
+\centeredimage{packet_parser}{Packet parser defined in P4}
 A parser is a state machine where each state works on a subset of the packet's fields and can fail or succeed. When a state fails an action must be performed, for example, drop the packet or forward it to another state.
 Once the parsing is done there is a pipeline of \emph{Match-Action} called \emph{Programmable Match-Action Pipeline} and a valid packet must be processed by each step of the pipeline.
 An action of the pipeline is used to change header values, decide the destination, or change addresses. In the following example there is a single step that defines IPv4 forwarding:
-\begin{lstlisting}
-  control MyIngress(inout headers hdr,
-          inout metadata meta,
-          inout standard_metadata_t standard_metadata) {
-
-    action drop() {
-      mark_to_drop(standard_metadata);
-    }
-
-    action ipv4_forward(macAddr_t dstAddr, 
-                        egressSpec_t port) {
-      standard_metadata.egress_spec = port;
-      hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-      hdr.ethernet.dstAddr = dstAddr;
-      hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-    }
-
-    table ipv4_lpm {
-      key = {
-        hdr.ipv4.dstAddr: lpm;
-      }
-      actions = {
-        ipv4_forward;
-        drop;
-        NoAction;
-      }
-      size = 1024;
-      default_action = drop();
-    }
-
-    apply {
-      if (hdr.ipv4.isValid()) {
-          ipv4_lpm.apply();
-      }
-    }
-}
-\end{lstlisting}
+\centeredimage{packet_ingress}{Packet ingress defined in P4}
 \centeredimage{programmable_pipeline.png}{Programmable Pipeline}
 The last piece of the pipeline is the \emph{Programmable Deparser} which decides how the packets will look in the wire.
 It emits headers in the order that they should be transmitted in the wire.
