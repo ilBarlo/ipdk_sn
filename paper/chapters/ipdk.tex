@@ -21,7 +21,7 @@ Under the hood, it uses a few well-established linux frameworks like \acrshort{s
     \item \bold{Target Abstraction Interface}: The Target Abstraction Interface (TAI) is an abstraction exposed by an infrastructure device running infrastructure applications that serve connected compute instances (attached hosts and/or VMs, which may or may not be containerized).
     The infrastructure device may also contain an isolated Infrastructure Manager used to help manage the lifecycle of the device.
 \end{itemize}
-In the image below it's possible to see how the two interfaces work and in which kind of communication they are involved.
+In the image below it's possible to see how the two interfaces work and in which kind of communication they are involved\cite{ipdk-introduction}.
 \centeredimage{ipdk-layers}{IPDK layers and interfaces interactions}
 Using \acrshort{ipdk} it is possible to build either Virtual Networking or Virtual Storage environments.
 
@@ -36,7 +36,7 @@ In the image above we can see 4 different steps needed to hotplug a new virtual 
     Any exception traffic from that hotplug'd device will arrive on this netdev.
     Any traffic P4 OVS wants to direct to this device can be sent over this netdev as well.
     \item \bold{3.} The tenant instance loads the corresponding driver for that device and can now send/receive traffic.
-    \item \bold{4.} The virtual private cloud data-plane moves traffic to/from the instance, sending exceptions to the infrastructure software when needed.
+    \item \bold{4.} The virtual private cloud data-plane moves traffic to/from the instance, sending exceptions to the infrastructure software when needed\cite{ipdk-virtual-networking}.
 \end{itemize}
 
 \subsubsection{Virtual Storage}
@@ -63,7 +63,7 @@ Using the same schema that we've seen in the \acrshort{vn} part we can describe 
 \end{itemize}
 \acrshort{ipdk} provides a good number of recipes where to start to develop a custom solution.
 Almost all the solutions are based on P4-OVS and a P4 program.
-The most representative example is IPv4 forwarding which uses the same program we've seen in the section about \acrlong{vn}.
+The most representative example is IPv4 forwarding which uses the same program we've seen in the section about \acrlong{vn}\cite{ipdk-virtual-storage}.
 
 \subsection{IPDK L3 forwarding example}
 First of all, it is very convenient to clone the \acrshort{ipdk} repository and start from the example structure since a bunch of scripts are provided to make the configuration process easier and faster.

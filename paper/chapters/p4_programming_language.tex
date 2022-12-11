@@ -4,7 +4,7 @@
 \begin{document}
 
 \subsection{Introduction}
-Before starting it’s important to understand which programming language is used to build most of the devices used in the Intel Solution.
+Before starting it's important to understand which programming language is used to build most of the devices used in the Intel Solution.
 P4 is a domain-specific programming language for network devices, specifying how data plane devices process packets.
 It is vendor-agnostic and protocol-agnostic and it aims at making easier the implementation of software packets processing pipeline instead of waiting years to develop a new chip.
 P4 is a declarative language, each P4 program follows the same workflow.
@@ -31,7 +31,7 @@ An action of the pipeline is used to change header values, decide the destinatio
 \centeredimage{programmable_pipeline.png}{Programmable Pipeline}
 The last piece of the pipeline is the \emph{Programmable Deparser} which decides how the packets will look in the wire.
 It emits headers in the order that they should be transmitted in the wire.
-The syntax used to define a de-parser is the same as shown for the parser.
+The syntax used to define a de-parser is the same as shown for the parser\cite{p4-docs}.
 \begin{lstlisting}
   control MyDeparser(packet_out packet, in headers hdr) {
     apply {
@@ -40,6 +40,26 @@ The syntax used to define a de-parser is the same as shown for the parser.
     }
   }
 \end{lstlisting}
-In the context of IPDK, P4 is used to define how the integrated OVS (Open vSwitch) should process packets. 
+In the context of IPDK, P4 is used to define how the integrated OVS (Open vSwitch) should process packets.
+\subsection{P4 and eBPF}
+There are a few differences between P4 and eBPF but what is important to understand is that lately, the community is trying to make them compatible.
+There are a lot of good projects that try to generate eBPF code from P4 and vice-versa.
+The main differences are listed below:
+\begin{itemize}
+  \item eBPF is a general purpose framework while P4 is a specific purpose framework. eBPF works on bytecode and registers while P4 works on headers parser and match-action tables.
+  \item The safety is ensured by the kernel in eBPF while is ensured by design in P4.
+\end{itemize}
+Some good projects that are working on the translation between P4 and eBPF are:
+\begin{itemize}
+  \item p4c-ebpf
+  \item p4c-xdp
+  \item p4c-ubpf
+\end{itemize}
+But some of us could ask why we are trying to write P4 and translate it in eBPF, or vice-versa. There is more than one motivation:
+\begin{itemize}
+  \item P4 is less flexible than eBPF, which can make us think that this is a disadvantage but when it comes to certain kinds of formal correctness analysis, a more restricted language can make such tasks easier to do.
+  \item Writing P4 is more secure since is a declarative language so it is not affected by most of the programming errors that are possible in C-like languages used to write eBPF.
+\end{itemize}
+Is important to note that we said that P4 is less flexible than eBPF but this assertion is true when we go deep into the usage and we want to do something very specific but in the general usage both are very similar to each other.
 \clearpage
 \end{document}
