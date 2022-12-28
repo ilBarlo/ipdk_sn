@@ -4,5 +4,7 @@
 *.fls
 *.log
 *.synctex.gz
-*.pdf
+sn.pdf
 *.toc
+.DS_Store
+**.DS_Store
