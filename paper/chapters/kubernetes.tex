@@ -1,0 +1,12 @@
+% !TeX root = ../sn.tex
+\documentclass[../sn.tex]{subfiles}
+
+\begin{document}
+\subsection{Support}
+Is there a repository that aims to develop a recipe to use IPDK in a kubernetes environment.
+This recipe has some constraints that make difficult its usability in a real-world use case.
+The recipe is on GitHub, at the link https://github.com/ipdk-io/k8s-infra-offload.
+At the moment this recipe is working only with Open vSwitch but in the future will be possible to use it also with hardware target.
+
+There is a big problem related to hardware targets: a large amount of local packets will be processed by the SmartNic once the recipe is offloaded to it. This incredibly high number of packets may be a problem from a performance point of view.
+\end{document}
